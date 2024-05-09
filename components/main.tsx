@@ -34,7 +34,8 @@ const Main = () => {
 
   try {
     const signature = await sendTransaction(transaction, connection);
-    return true; // Indicate success if transaction is sent successfully
+    // return { success: true, amount }; // Return the amount transferred upon success
+    return true // Return the amount transferred upon success
   } catch (error) {
     console.error('Transfer failed:', error);
     return false; // Indicate failure if there's an error
@@ -49,7 +50,6 @@ const Main = () => {
       return; 
     }
 
-    
   // Check if the amount is not provided
   if (!amount) {
     toast.error("Input amount is required!");
@@ -68,56 +68,65 @@ const Main = () => {
     }
 
        setIsLoading(true);
-    try {
-      const amountInLamports = parseFloat(amount) * 1_000_000_000;
-      const transferSuccessful = await transferSOL(amountInLamports);
+   setIsLoading(true);
+  try {
+    const transferResult = await transferSOL(amountInLamports);
+    console.log(transferResult);
 
+
+    
+    // Perform a type check before accessing the 'success' and 'amount' properties
+    // if (typeof transferResult === 'object' && transferResult!== null && 'success' in transferResult) {
+      if (transferResult) {
+        let reward = 0;
+        if (amountInLamports >= 2_000_000_000) { // 5 SOL in lamports
+          reward = amountInLamports * 2; // Multiply the amount by 2 if it's 5 SOL or more
+        }
+        console.log(amountInLamports);
+        console.log(reward);
 
         // Create a new transaction object
-      if (transferSuccessful) {
-      let reward = 0;
-      if (amountInLamports >= 2_000_000_000) { // 5 SOL in lamports
-        reward = amountInLamports * 2; // Multiply the amount by 2 if it's 5 SOL or more
+        const transactionData = {
+          amount: amountInLamports, // Use the amount from the transferResult
+          reward: reward,
+          address: publicKey.toString(),
+          timestamp: new Date().toISOString(),
+        };
+
+        const url = "http://localhost:3000/api/post";
+
+        // Make a POST request to create a new transaction
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(transactionData),
+        });
+
+        if (response.ok) {
+          toast.success('Transaction Successful!');
+          setAmount('');
+        } else {
+          const errorData = await response.json();
+          toast.error('Transfer failed: ');
+
+          throw new Error(errorData.error || 'Transaction failed');
         }
-        console.log(reward)
-      // Create a new transaction object
-      const transactionData = {
-        amount: amountInLamports,
-        reward: reward,
-        address: publicKey.toString(),
-        timestamp: new Date().toISOString(),
-      };
-
-      const url = "http://localhost:3000/api/post";
-
-      // Make a POST request to create a new transaction
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(transactionData),
-      });
-
-      if (response.ok) {
-        toast.success('Transaction Successful!');
-        setAmount('');
       } else {
-        const errorData = await response.json();
         toast.error('Transfer failed: ');
-
-        throw new Error(errorData.error || 'Transaction failed');
       }
-    } else {
-      toast.error('Transfer failed');
-    }
+    // } else {
+    //   // Handle the case where transferResult is not an object with 'success' property
+    //   toast.error('Transfer failed: Unexpected response from transferSOL.');
+    // }
   } catch (error: any) {
     console.error('Transfer failed:', error);
     toast.error('Transfer failed: ');
   } finally {
     setIsLoading(false);
   }
-  };
+};
   
   //   useEffect(() => {
   //     const fetchTransactions = async () => {
