@@ -8,14 +8,6 @@ import { clusterApiUrl, Connection, PublicKey, Signer, Transaction, SystemProgra
 import { toast } from 'react-hot-toast';
 
 
-// import db from connectDB
-// Import dbConnect using require
-// const dbConnect = require('@/app/connectDB/db');
-// import connectDB from '@/app/api/connectDB/db'
-// import GorillaTransaction from '@/app/connectDB/txSchema';
-// const GorillaTransaction = require('@/app/connectDB/txSchema')
-// import GorillaTransaction from '../model/txSchema';
-
 
 const Main = () => {
   const { connected, wallet, publicKey, sendTransaction  } = useWallet();
@@ -40,12 +32,15 @@ const Main = () => {
       })
     );
 
-    try {
-      const signature = await sendTransaction(transaction, connection);
-    } catch (error) {
-      console.error('Transfer failed:', error);
-    }
-  };
+  try {
+    const signature = await sendTransaction(transaction, connection);
+    return true; // Indicate success if transaction is sent successfully
+  } catch (error) {
+    console.error('Transfer failed:', error);
+    return false; // Indicate failure if there's an error
+  }
+};
+
 
   const handleTransfer = async () => {
     // Check if the wallet is not connected or publicKey is not available
@@ -64,47 +59,70 @@ const Main = () => {
        setIsLoading(true);
     try {
       const amountInLamports = parseFloat(amount) * 1_000_000_000;
-      const transactionResult = await transferSOL(amountInLamports);
+      const transferSuccessful = await transferSOL(amountInLamports);
 
 
         // Create a new transaction object
-    const transactionData = {
-      amount: amountInLamports,
-      address: publicKey.toString(),
-      timestamp: new Date().toISOString(),
+  if (transferSuccessful) {
+      // Create a new transaction object
+      const transactionData = {
+        amount: amountInLamports,
+        address: publicKey.toString(),
+        timestamp: new Date().toISOString(),
       };
-      console.log(transactionData)
-        const url = "http://localhost:3000/api/post";
 
-       // Make a POST request to create a new transaction
-       const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(transactionData),
-    });
-      console.log(response)
-        if (response.ok) {
-      toast.success('Transaction Successful!');
-      setAmount('');
+      const url = "http://localhost:3000/api/post";
+
+      // Make a POST request to create a new transaction
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(transactionData),
+      });
+
+      if (response.ok) {
+        toast.success('Transaction Successful!');
+        setAmount('');
+      } else {
+        const errorData = await response.json();
+        toast.error('Transfer failed: ');
+
+        throw new Error(errorData.error || 'Transaction failed');
+      }
     } else {
-      const errorData = await response.json();
-      throw new Error(errorData.error || 'Transaction failed');
+      toast.error('Transfer failed');
     }
-
-      // await transferSOL(amountInLamports);
-         toast.success('Transaction Successful!');
-      setAmount(''); 
-    } catch (error: any) {
-      console.error('Transfer failed:', error);
-      toast.error('Transfer failed: ' + error.message); 
-    } finally {
-      setIsLoading(false);
-    }
+  } catch (error: any) {
+    console.error('Transfer failed:', error);
+    toast.error('Transfer failed: ');
+  } finally {
     setIsLoading(false);
+  }
   };
+  
+  //   useEffect(() => {
+  //     const fetchTransactions = async () => {
+  //         const url = "http://localhost:3000/api/get";
 
+  //     try {
+  //       const response = await fetch(url); // Your API route
+  //       if (!response.ok) {
+  //         throw new Error('Failed to fetch transactions');
+  //       }
+  //       const data = await response.json();
+  //       console.log(data)
+  //       // setTransactions(data);
+  //     } catch (error) {
+  //       // setError(error.message);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
+
+  //   fetchTransactions();
+  // }, []);
   return (
     // <div className="w-[30%] mx-auto mt-48">
 <div className="container w-full sm:w-[60%] md:w-[60%] lg:w-[30%] mx-auto mt-48 px-4">
