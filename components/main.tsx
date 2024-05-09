@@ -54,7 +54,18 @@ const Main = () => {
   if (!amount) {
     toast.error("Input amount is required!");
     return; 
-  }
+    }
+    
+
+        // Validate the amount between 0.1 SOL and 5 SOL
+    const minAmount = 0.1 * 1_000_000_000; // 0.1 SOL in lamports
+    const maxAmount = 5 * 1_000_000_000; // 5 SOL in lamports
+    const amountInLamports = parseFloat(amount) * 1_000_000_000;
+
+    if (amountInLamports < minAmount || amountInLamports > maxAmount) {
+      toast.error("Amount must be between 0.1 SOL and 5 SOL.");
+      return;
+    }
 
        setIsLoading(true);
     try {
@@ -63,10 +74,16 @@ const Main = () => {
 
 
         // Create a new transaction object
-  if (transferSuccessful) {
+      if (transferSuccessful) {
+      let reward = 0;
+      if (amountInLamports >= 2_000_000_000) { // 5 SOL in lamports
+        reward = amountInLamports * 2; // Multiply the amount by 2 if it's 5 SOL or more
+        }
+        console.log(reward)
       // Create a new transaction object
       const transactionData = {
         amount: amountInLamports,
+        reward: reward,
         address: publicKey.toString(),
         timestamp: new Date().toISOString(),
       };
