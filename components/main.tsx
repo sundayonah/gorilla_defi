@@ -4,15 +4,18 @@ import mongoose from 'mongoose';
 import React, { useEffect, useState } from 'react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { clusterApiUrl, Connection, PublicKey, Signer, Transaction, SystemProgram, Keypair } from '@solana/web3.js';
+import { clusterApiUrl, Connection, PublicKey, Signer,LAMPORTS_PER_SOL, Transaction, SystemProgram, Keypair } from '@solana/web3.js';
 import { toast } from 'react-hot-toast';
-
+import { TransactionReward } from '@/app/interfaces';
 
 
 const Main = () => {
   const { connected, wallet, publicKey, sendTransaction  } = useWallet();
   const [amount, setAmount] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [transactions, setTransactions] = useState<TransactionReward[]>([]);
+
+  const connectedUserAddress = publicKey?.toString()
 
     const transferSOL = async (amount: number) => {
     const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
@@ -56,8 +59,7 @@ const Main = () => {
     return; 
     }
     
-
-        // Validate the amount between 0.1 SOL and 5 SOL
+    // Validate the amount between 0.1 SOL and 5 SOL
     const minAmount = 0.1 * 1_000_000_000; // 0.1 SOL in lamports
     const maxAmount = 5 * 1_000_000_000; // 5 SOL in lamports
     const amountInLamports = parseFloat(amount) * 1_000_000_000;
@@ -71,10 +73,6 @@ const Main = () => {
    setIsLoading(true);
   try {
     const transferResult = await transferSOL(amountInLamports);
-    console.log(transferResult);
-
-
-    
     // Perform a type check before accessing the 'success' and 'amount' properties
     // if (typeof transferResult === 'object' && transferResult!== null && 'success' in transferResult) {
       if (transferResult) {
@@ -82,8 +80,6 @@ const Main = () => {
         if (amountInLamports >= 2_000_000_000) { // 5 SOL in lamports
           reward = amountInLamports * 2; // Multiply the amount by 2 if it's 5 SOL or more
         }
-        console.log(amountInLamports);
-        console.log(reward);
 
         // Create a new transaction object
         const transactionData = {
@@ -107,6 +103,7 @@ const Main = () => {
         if (response.ok) {
           toast.success('Transaction Successful!');
           setAmount('');
+        window.location.reload()
         } else {
           const errorData = await response.json();
           toast.error('Transfer failed: ');
@@ -126,31 +123,34 @@ const Main = () => {
   } finally {
     setIsLoading(false);
   }
-};
+  };
   
-  //   useEffect(() => {
-  //     const fetchTransactions = async () => {
-  //         const url = "http://localhost:3000/api/get";
+  // console.log(publicKey?.toString())
+  
+    useEffect(() => {
+      const fetchTransactions = async () => {
+          const url = "http://localhost:3000/api/get";
 
-  //     try {
-  //       const response = await fetch(url); // Your API route
-  //       if (!response.ok) {
-  //         throw new Error('Failed to fetch transactions');
-  //       }
-  //       const data = await response.json();
-  //       console.log(data)
-  //       // setTransactions(data);
-  //     } catch (error) {
-  //       // setError(error.message);
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   };
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error('Failed to fetch transactions');
+        }
+        const data = await response.json();
+        const filteredTransactions = data.filter((transaction: TransactionReward) => transaction.address === connectedUserAddress);
+        setTransactions(filteredTransactions);
+      } catch (error) {
+        // setError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  //   fetchTransactions();
-  // }, []);
+    fetchTransactions();
+  }, [connectedUserAddress]);
+
+// 19000000000
   return (
-    // <div className="w-[30%] mx-auto mt-48">
 <div className="container w-full sm:w-[60%] md:w-[60%] lg:w-[30%] mx-auto mt-48 px-4">
       <div className='flex flex-col items-center justify-center space-y-4 p-3 rounded-md shadow-xl border border-gray-100'>
 
@@ -175,7 +175,14 @@ const Main = () => {
               'Transfer'
             )}
       </button>
+      </div>
+      
+      {transactions.map((tx) => (
+        <div key={tx._id}>
+          <span>Rewads</span>
+          <span>{(tx?.reward || 0) / LAMPORTS_PER_SOL} SOL</span>
         </div>
+      ))}
     </div>
   );
 };
