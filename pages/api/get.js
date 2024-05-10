@@ -6,12 +6,12 @@ import Cors from 'cors';
 
 
 
-// Create a new instance of the cors middleware
-const corsHandler = Cors({
-//   origin: 'https://gorilla-defi.vercel.app', // Specify the origin of your frontend
-  origin: 'http://localhost:3000', // Specify the origin of your frontend
-  methods: ['GET'], // Specify the allowed methods
-});
+// // Create a new instance of the cors middleware
+// const corsHandler = Cors({
+// //   origin: 'https://gorilla-defi.vercel.app', // Specify the origin of your frontend
+//   origin: 'http://localhost:3000', // Specify the origin of your frontend
+//   methods: ['GET'], // Specify the allowed methods
+// });
 
 export default async function get(req, res) {
   // Use the corsHandler middleware

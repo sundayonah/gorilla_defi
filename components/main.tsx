@@ -125,14 +125,12 @@ const Main = () => {
     useEffect(() => {
       const fetchTransactions = async () => {
           const url = "http://localhost:3000/api/get";
-
       try {
         const response = await fetch(url);
         if (!response.ok) {
           throw new Error('Failed to fetch transactions');
         }
         const data = await response.json();
-        console.log(data)
         const filteredTransactions = data.filter((transaction: TransactionReward) => transaction.address === connectedUserAddress);
         setTransactions(filteredTransactions);
       } catch (error) {
