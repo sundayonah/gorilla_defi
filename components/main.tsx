@@ -149,7 +149,7 @@ const Main = () => {
 <div className="container w-full sm:w-[60%] md:w-[60%] lg:w-[30%] mx-auto mt-48 px-4">
       <div className='flex flex-col items-center justify-center space-y-4 p-3 rounded-md shadow-xl border border-gray-100'>
 
-      <h2 className="text-xl font-bold text-[#5c3b12]">Transfer SOL</h2>
+      <h2 className="text-xl font-bold text-[#5c3b12]">Invest SOL</h2>
         <input
         type="number"
         value={amount}
@@ -167,7 +167,7 @@ const Main = () => {
             <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-white"></div>
           </div>
           ) : (
-              'Transfer'
+              'Deposit'
             )}
       </button>
       </div>
@@ -175,9 +175,15 @@ const Main = () => {
       <div className='mt-5'>
 
       {transactions.map((tx) => (
-        <div key={tx._id} className='space-x-2 text-[#5c3b12]'>
-          <span>Rewads</span>
-          <span>{(tx?.reward || 0) / LAMPORTS_PER_SOL} SOL</span>
+        <div key={tx._id} className='text-[#5c3b12]'>
+          <div className='space-x-2'>
+          <span>Total Amount Deposited:</span>
+          <span>${(tx?.amount || 0) / LAMPORTS_PER_SOL} SOL</span> <br />
+          </div>
+          <div className='space-x-2'>
+          <span>Rewads:</span>
+          <span>${(tx?.reward || 0) / LAMPORTS_PER_SOL} Gorilla</span>
+          </div>
         </div>
       ))}
       </div>
