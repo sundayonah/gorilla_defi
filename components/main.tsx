@@ -132,6 +132,7 @@ const Main = () => {
           throw new Error('Failed to fetch transactions');
         }
         const data = await response.json();
+        console.log(data)
         const filteredTransactions = data.filter((transaction: TransactionReward) => transaction.address === connectedUserAddress);
         setTransactions(filteredTransactions);
       } catch (error) {
@@ -177,11 +178,11 @@ const Main = () => {
       {transactions.map((tx) => (
         <div key={tx._id} className='text-[#5c3b12]'>
           <div className='space-x-2'>
-          <span>Total Amount Deposited:</span>
+          <span className='text-xl font-bold '>Total Amount Deposited:</span>
           <span>${(tx?.amount || 0) / LAMPORTS_PER_SOL} SOL</span> <br />
           </div>
           <div className='space-x-2'>
-          <span>Rewads:</span>
+          <span className='text-xl font-bold '>Rewads:</span>
           <span>${(tx?.reward || 0) / LAMPORTS_PER_SOL} Gorilla</span>
           </div>
         </div>
