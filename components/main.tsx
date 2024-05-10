@@ -88,8 +88,13 @@ const Main = () => {
           timestamp: new Date().toISOString(),
         };
 
-        // const url = "http://localhost:3000/api/post";
-          const url = "https://gorilla-defi.vercel.app/api/post";
+        const url = "http://localhost:3000/api/post";
+        // const url = "https://gorilla-defi.vercel.app/api/post";
+        
+          // Create an AbortController instance
+      const controller = new AbortController();
+        const signal = controller.signal;
+        console.log(signal)
 
 
         // Make a POST request to create a new transaction
@@ -99,6 +104,7 @@ const Main = () => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(transactionData),
+          signal
         });
 
         if (response.ok) {
@@ -126,8 +132,8 @@ const Main = () => {
   
     useEffect(() => {
       const fetchTransactions = async () => {
-        // const url = "http://localhost:3000/api/get";
-            const url = "https://gorilla-defi.vercel.app/api/get";
+        const url = "http://localhost:3000/api/get";
+            // const url = "https://gorilla-defi.vercel.app/api/get";
 
       try {
         const response = await fetch(url);
