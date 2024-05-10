@@ -88,7 +88,9 @@ const Main = () => {
           timestamp: new Date().toISOString(),
         };
 
-        const url = "http://localhost:3000/api/post";
+        // const url = "http://localhost:3000/api/post";
+          const url = "https://gorilla-defi.vercel.app/api/post";
+
 
         // Make a POST request to create a new transaction
         const response = await fetch(url, {
@@ -124,7 +126,9 @@ const Main = () => {
   
     useEffect(() => {
       const fetchTransactions = async () => {
-          const url = "http://localhost:3000/api/get";
+        // const url = "http://localhost:3000/api/get";
+            const url = "https://gorilla-defi.vercel.app/api/get";
+
       try {
         const response = await fetch(url);
         if (!response.ok) {
