@@ -31,10 +31,8 @@ export default async function post(req, res) {
     const existingTransaction = await GorillaTransaction.findOne({ address });
     if (existingTransaction) {
 
-      // console.log(existingTransaction.amount)
-      // console.log(amount)
+
       const newTotalAmount = existingTransaction.amount + amount;
-      // console.log(newTotalAmount)
 
       // Calculate the new reward based on the new amount
       let newReward = 0;
@@ -44,7 +42,6 @@ export default async function post(req, res) {
         newReward = newTotalAmount * 2; // Multiply the amount by 2 if it's 2 SOL or more
       }
       
-      console.log(newReward);
 
       // If the address exists, update the existing record
       // existingTransaction.amount += amount;

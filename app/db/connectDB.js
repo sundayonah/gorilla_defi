@@ -9,7 +9,7 @@ const connectDB = async () => {
       // poolSize: 10,
       socketTimeoutMS:360000
     });
-    console.log('MongoDB Connected...');
+    // console.log('MongoDB Connected...');
   } catch (err) {
     console.error(`Failed to connect to MongoDB: ${err.message}`);
     process.exit(1);

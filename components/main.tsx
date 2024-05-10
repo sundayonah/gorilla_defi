@@ -74,7 +74,6 @@ const Main = () => {
   try {
     const transferResult = await transferSOL(amountInLamports);
     // Perform a type check before accessing the 'success' and 'amount' properties
-    // if (typeof transferResult === 'object' && transferResult!== null && 'success' in transferResult) {
       if (transferResult) {
         let reward = 0;
         if (amountInLamports >= 2_000_000_000) { // 5 SOL in lamports
@@ -113,10 +112,7 @@ const Main = () => {
       } else {
         toast.error('Transfer failed: ');
       }
-    // } else {
-    //   // Handle the case where transferResult is not an object with 'success' property
-    //   toast.error('Transfer failed: Unexpected response from transferSOL.');
-    // }
+
   } catch (error: any) {
     console.error('Transfer failed:', error);
     toast.error('Transfer failed: ');
@@ -125,7 +121,6 @@ const Main = () => {
   }
   };
   
-  // console.log(publicKey?.toString())
   
     useEffect(() => {
       const fetchTransactions = async () => {
