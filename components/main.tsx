@@ -90,11 +90,6 @@ const Main = () => {
 
         const url = "http://localhost:3000/api/post";
         // const url = "https://gorilla-defi.vercel.app/api/post";
-        
-          // Create an AbortController instance
-      const controller = new AbortController();
-        const signal = controller.signal;
-        console.log(signal)
 
 
         // Make a POST request to create a new transaction
@@ -104,7 +99,6 @@ const Main = () => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(transactionData),
-          signal
         });
 
         if (response.ok) {
