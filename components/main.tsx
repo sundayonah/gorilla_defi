@@ -177,12 +177,15 @@ const Main = () => {
       </button>
       </div>
       
+      <div className='mt-5'>
+
       {transactions.map((tx) => (
-        <div key={tx._id}>
+        <div key={tx._id} className='space-x-2 text-[#5c3b12]'>
           <span>Rewads</span>
           <span>{(tx?.reward || 0) / LAMPORTS_PER_SOL} SOL</span>
         </div>
       ))}
+      </div>
     </div>
   );
 };
