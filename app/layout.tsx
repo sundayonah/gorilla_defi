@@ -16,12 +16,10 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
-
   return (
 
         <WalletContextProvider> 
-              <html lang="en">
+        <html lang="en">
         <body>
           <Toaster position="top-right" />
           {children}

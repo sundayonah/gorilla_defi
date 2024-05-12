@@ -18,6 +18,7 @@ import {
 } from "@solana/wallet-adapter-wallets";
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
 import { useWallet } from "@solana/wallet-adapter-react";
+// import { TonConnectUIProvider } from "@tonconnect/ui-react";
 
 const WalletContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const network = WalletAdapterNetwork.Devnet;
@@ -34,15 +35,19 @@ const WalletContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
       new TrustWalletAdapter(),
       new CoinbaseWalletAdapter(),
     ],
-    [network]
+    []
   );
 
   return (
+  //  <TonConnectUIProvider manifestUrl="http://localhost:3000/tonconnect-manifest.json">
     <ConnectionProvider endpoint={endpoint}>
       <WalletProvider wallets={wallets} autoConnect>
-        <WalletModalProvider>{children}</WalletModalProvider>
+        <WalletModalProvider>
+          {children}
+        </WalletModalProvider>
       </WalletProvider>
     </ConnectionProvider>
+  //  </TonConnectUIProvider>
   );
 };
 
