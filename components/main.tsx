@@ -7,6 +7,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { clusterApiUrl, Connection, PublicKey, Signer, LAMPORTS_PER_SOL, Transaction, SystemProgram, Keypair } from '@solana/web3.js';
 import { toast } from 'react-hot-toast';
 import { TransactionReward } from '@/app/interfaces';
+import axios from 'axios'
 // import { useTonAddress, useTonConnectUI } from '@tonconnect/ui-react';
 
 
@@ -93,8 +94,7 @@ const Main = () => {
           timestamp: new Date().toISOString(),
         };
 
-        const url = "http://localhost:3000/api/post";
-        // const url = "https://gorilla-defi.vercel.app/api/post";
+        const url = "/api/post";
 
 
         // Make a POST request to create a new transaction
@@ -106,8 +106,9 @@ const Main = () => {
           body: JSON.stringify(transactionData),
         });
 
+
         if (response.ok) {
-          toast.success('Transaction Successful!');
+          toast.success(`You have Successful deposited: ${amountInLamports}`);
           setAmount('');
         window.location.reload()
         } else {
@@ -188,27 +189,20 @@ const Main = () => {
   //   }
   // };
 
-    useEffect(() => {
-      const fetchTransactions = async () => {
-      const url = "http://localhost:3000/api/get";
-      // const url = "https://gorilla-defi.vercel.app/api/get";
-
+      useEffect(() => {
+    const fetchUserData = async () => {
       try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error('Failed to fetch transactions');
-        }
-        const data = await response.json();
-        const filteredTransactions = data.filter((transaction: TransactionReward) => transaction.address === connectedUserAddress);
+        const response = await axios.get(`/api/get`);
+        const data = response.data;
+        const filteredTransactions = data.filter((transaction: TransactionReward) => transaction.address == connectedUserAddress);
         setTransactions(filteredTransactions);
+ 
       } catch (error) {
-        // setError(error.message);
-      } finally {
-        setIsLoading(false);
+        console.error('Error fetching user data:', error);
       }
     };
 
-    fetchTransactions();
+    fetchUserData();
   }, [connectedUserAddress]);
 
 // 19000000000
